@@ -1,22 +1,22 @@
 # Customers — Entry Points
 
-Each subdirectory is a standalone Go entry point for a specific client/tenant.
+Each subdirectory is a standalone Go entry point for a specific Customer/tenant.
 
 ## Pattern
 
 ```markdown
 customers/
-├── client-a/
+├── customer-a/
 │   ├── go.mod
 │   ├── main.go          # Wires adapters, starts the bot
 │   └── config.go        # Environment-specific config
-└── client-b/
+└── customer-b/
     ├── go.mod
     ├── main.go
     └── config.go
 ```
 
-Clients import the Core SDK and customize:
+Customer import the Core SDK and customize:
 
 - Messenger adapter (WhatsApp, Telegram, etc.)
 - Payment gateway (Mercado Pago, Stripe)
@@ -24,11 +24,11 @@ Clients import the Core SDK and customize:
 - Product catalog
 - Business rules / prompts
 
-## Adding a New Client
+## Adding a New Customer
 
-1. Create directory `customers/<client-name>/`
-2. Initialize module: `go mod init github.com/yourorg/<client-name>`
+1. Create directory `customers/<customer-name>/`
+2. Initialize module: `go mod init github.com/yourorg/<customer-name>`
 3. Import `viabot.stream/sdk`
 4. Wire dependencies in `main.go`
-5. Add `./customers/<client-name>` to `go.work`
+5. Add `./customers/<customer-name>` to `go.work`
 6. Run `go work sync`

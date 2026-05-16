@@ -57,3 +57,13 @@ updated: '2026-05-16'
 - Fixed: `scanOrderItems` now accepts currency parameter — prevents silent Money creation with empty currency
 - Fixed: `cart_items` schema now includes `currency DEFAULT 'BRL'` column — cart items properly track currency
 - Created: [[wiki/decisions/0003-sqlite-currency-storage]] — Currency storage strategy decision record
+
+## [2026-05-16] build | Multi-agent TDD pipeline with 7 agents
+
+- Created: `.opencode/agents/` — 7 OpenCode agent definitions
+- Created: `.opencode/agents/prompts/` — Full prompt files for each agent
+- Agents: `viabot-specialist` (orchestrator), `analyst`, `qa-analyst`, `tdd-writer`, `builder`, `compliance`, `vault-updater`
+- Pipeline: User → viabot-specialist → analyst (+qa if bug) → tdd-writer → builder → compliance (HITL) → vault-updater
+- Updated: `opencode.json` — `default_agent` → `viabot-specialist`, all 7 agents with `{file:}` prompt references
+- Created: [[wiki/specs/AGENT-PIPELINE]] — Multi-agent pipeline design spec
+- Created: [[wiki/decisions/0004-multi-agent-pipeline]] — Multi-agent TDD enforcement decision record

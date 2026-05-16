@@ -2,7 +2,78 @@
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": "notify",
   "share": "manual",
-  "default_agent": "build",
+  "default_agent": "viabot-specialist",
+  "agent": {
+    "viabot-specialist": {
+      "description": "Orchestrates multi-agent TDD pipeline. Routes requests through analyst -> tdd-writer -> builder -> compliance -> vault-updater. HITL on compliance issues.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/viabot-specialist.md}",
+      "permission": {
+        "edit": "ask",
+        "bash": "ask"
+      }
+    },
+    "analyst": {
+      "description": "Analyzes requests, consults vault, classifies type (feature/bug/refactor/docs), produces structured spec.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/analyst.md}",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask",
+        "mcp": {
+          "obsidian": "allow"
+        }
+      }
+    },
+    "qa-analyst": {
+      "description": "Bug root cause analysis. Investigates code, git history, test output. Produces fix specification.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/qa-analyst.md}",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "tdd-writer": {
+      "description": "TDD test writer. Writes failing tests first. Edits test files only. Verifies tests fail before handoff.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/tdd-writer.md}",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask"
+      }
+    },
+    "builder": {
+      "description": "Implements production code to pass TDD tests. Enforces Object Calisthenics, SOLID, hexagonal architecture.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/builder.md}",
+      "permission": {
+        "edit": "allow",
+        "bash": "ask"
+      }
+    },
+    "compliance": {
+      "description": "Reviews code against Calisthenics, SOLID, hexagonal architecture, PII, and tests. Returns structured approval or issues. HITL required.",
+      "mode": "all",
+      "prompt": "{file:.opencode/agents/prompts/compliance.md}",
+      "permission": {
+        "edit": "deny",
+        "bash": "ask"
+      }
+    },
+    "vault-updater": {
+      "description": "Updates Obsidian vault with new knowledge: log.md, concepts, decisions, entities. Uses MCP obsidian tools.",
+      "mode": "subagent",
+      "prompt": "{file:.opencode/agents/prompts/vault-updater.md}",
+      "permission": {
+        "edit": "deny",
+        "bash": "deny",
+        "mcp": {
+          "obsidian": "allow"
+        }
+      }
+    }
+  },
   "model": "deepseek-v4-flash-free",
   "instructions": [
     "AGENTS.md",
@@ -60,6 +131,11 @@
     "docs": {
       "description": "Cria ou atualiza documentação de design",
       "template": "Aja como o agente @Builder. Crie ou atualize documentação de design em `obsidian-vault/wiki/specs/` seguindo o padrão do projeto (frontmatter, summary, detalhes, related, references) para: $ARGUMENTS",
+      "agent": "build"
+    },
+    "commit": {
+      "description": "Gera mensagem de commit convencional para as mudanças atuais",
+      "template": "Use a skill `conventional-commit`. Analise o git diff atual e gere uma mensagem de commit seguindo o padrão Conventional Commits para: $ARGUMENTS",
       "agent": "build"
     }
   }

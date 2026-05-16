@@ -1,0 +1,66 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "autoupdate": "notify",
+  "share": "manual",
+  "default_agent": "build",
+  "model": "deepseek-v4-flash-free",
+  "instructions": [
+    "AGENTS.md",
+    ".opencode/instructions/GERAL_RULES.instructions.md",
+    ".opencode/instructions/CODE_ARCHITECTURE.instructions.md"
+  ],
+  "compaction": {
+    "auto": true,
+    "prune": true,
+    "reserved": 15000
+  },
+  "watcher": {
+    "ignore": [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      ".git/**",
+      "*.pyc",
+      "__pycache__/**",
+      ".venv/**",
+      "venv/**",
+      "*.log",
+      ".opencode/rag/.venv/**",
+      ".opencode/rag/index.db",
+      ".opencode/rag/__pycache__/**",
+      "core/**/*.test",
+      "tmp/**"
+    ]
+  },
+  "mcp": {
+    "obsidian": {
+      "type": "local",
+      "enabled": true,
+      "command": [
+        "npx",
+        "-y",
+        "@bitbonsai/mcpvault@latest",
+        "obsidian-vault/"
+      ]
+    }
+  },
+  "permission": {
+    "edit": "ask",
+    "bash": "ask",
+    "mcp": {
+      "obsidian": "allow"
+    }
+  },
+  "command": {
+    "session-summary": {
+      "description": "Gera resumo da sessão atual e registra no vault Obsidian",
+      "template": "Aja como o agente @Builder. Gere um resumo da sessão atual:\n1. Liste arquivos criados/modificados (use `git diff` e `git status`)\n2. Registre no vault: use `obsidian_patch_note` em `wiki/log.md` com formato:\n   `## [YYYY-MM-DD] build | Título descritivo`\n3. Apresente o resumo ao usuário\n\nSe não houver mudanças relevantes, informe que nada foi registrado.\n\nContexto: $ARGUMENTS",
+      "agent": "build"
+    },
+    "docs": {
+      "description": "Cria ou atualiza documentação de design",
+      "template": "Aja como o agente @Builder. Crie ou atualize documentação de design em `obsidian-vault/wiki/specs/` seguindo o padrão do projeto (frontmatter, summary, detalhes, related, references) para: $ARGUMENTS",
+      "agent": "build"
+    }
+  }
+}

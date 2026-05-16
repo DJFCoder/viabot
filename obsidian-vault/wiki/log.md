@@ -41,3 +41,19 @@ updated: '2026-05-16'
 - Expanded: `payment.go` — `Payment` constructor, `WebhookEvent` constructor + accessors, `Payment` confirm/reject behaviour
 - Created: `core/application/` — 3 services: `OrderService`, `CartService`, `ProductService` (Hexagonal, DIP-compliant)
 - Tests: 44 total (36 domain + 8 application with in-memory mocks), all passing
+
+## [2026-05-16] build | SQLite adapter layer + public SDK + entry point
+
+- Fixed: `reconstructOrder` now properly uses passed-in `items` instead of re-scanning DB (eliminated N+1 in `FindByID`)
+- Created: `core/internal/sqlite/order_repository.go` — full OrderRepository with transaction-based Save, status machine persistence, payment round-trip
+- Created: `core/internal/sqlite/product_repository.go` — ProductRepository with FindAll, FindByCategory, UpdateAvailability
+- Created: `core/internal/sqlite/cart_repository.go` — CartRepository with ON DELETE CASCADE for cart_items
+- Created: `core/internal/sqlite/customer_repository.go` — CustomerRepository with FindByPhone
+- Created: `core/adapters.go` (`package sdk`) — public factory functions bridging internal adapters to entry points (Hexagonal DIP)
+- Created: `customers/cliente-a/` — first customer entry point with full DI wiring (database → repositories → services → stub gateway)
+- Added: `github.com/mattn/go-sqlite3 v1.14.44` dependency
+- Updated: `go.work` includes `./customers/cliente-a`
+- Tests: 17 new SQLite integration tests across all 4 repositories (with isolated :memory: databases)
+- Fixed: `scanOrderItems` now accepts currency parameter — prevents silent Money creation with empty currency
+- Fixed: `cart_items` schema now includes `currency DEFAULT 'BRL'` column — cart items properly track currency
+- Created: [[wiki/decisions/0003-sqlite-currency-storage]] — Currency storage strategy decision record

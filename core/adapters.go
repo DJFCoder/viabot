@@ -11,6 +11,7 @@ import (
 	"database/sql"
 
 	"viabot.stream/sdk/domain"
+	"viabot.stream/sdk/internal/mercadopago"
 	"viabot.stream/sdk/internal/sqlite"
 )
 
@@ -58,4 +59,14 @@ func NewCartRepository(database *sql.DB) domain.CartRepository {
 // NewOrderRepository creates a SQLite-backed OrderRepository.
 func NewOrderRepository(database *sql.DB) domain.OrderRepository {
 	return sqlite.NewOrderRepository(database)
+}
+
+// ---------------------------------------------------------------------------
+// Payment Gateway factories
+// ---------------------------------------------------------------------------
+
+// NewMercadoPagoGateway creates a Mercado Pago PaymentGateway adapter.
+// Returns an error if the access token is empty.
+func NewMercadoPagoGateway(accessToken string) (domain.PaymentGateway, error) {
+	return mercadopago.NewGateway(accessToken)
 }

@@ -83,6 +83,18 @@ func (p *Payment) Reject() {
 	p.status = PaymentRejected
 }
 
+// AttachPixDetails attaches QR code information for Pix payments.
+func (p *Payment) AttachPixDetails(qrCode, qrCodeText string) {
+	p.qrCode = qrCode
+	p.qrCodeText = qrCodeText
+}
+
+// AttachBoletoDetails attaches barcode and URL for Boleto payments.
+func (p *Payment) AttachBoletoDetails(barcode, url string) {
+	p.boletoBarcode = barcode
+	p.boletoURL = url
+}
+
 // ---------------------------------------------------------------------------
 // Payment read accessors
 // ---------------------------------------------------------------------------

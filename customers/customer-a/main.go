@@ -15,6 +15,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"viabot.stream/sdk"
 	"viabot.stream/sdk/application"
@@ -94,10 +95,22 @@ func main() {
 	orderRepository := sdk.NewOrderRepository(database)
 
 	// ------------------------------------------------------------------
-	// 3. Infrastructure — payment gateway (stub for development)
+	// 3. Infrastructure — payment gateway
+	// Default to stub for development; use real Mercado Pago when
+	// MERCADOPAGO_ACCESS_TOKEN environment variable is set.
 	// ------------------------------------------------------------------
 
-	paymentGateway := &stubPaymentGateway{}
+	var paymentGateway domain.PaymentGateway = &stubPaymentGateway{}
+	log.Println("using stub payment gateway (set MERCADOPAGO_ACCESS_TOKEN for Mercado Pago)")
+
+	if mpToken := os.Getenv("MERCADOPAGO_ACCESS_TOKEN"); mpToken != "" {
+		var err error
+		paymentGateway, err = sdk.NewMercadoPagoGateway(mpToken)
+		if err != nil {
+			log.Fatalf("create Mercado Pago gateway: %v", err)
+		}
+		log.Println("using Mercado Pago payment gateway")
+	}
 
 	// ------------------------------------------------------------------
 	// 4. Application — domain services wired with repositories
